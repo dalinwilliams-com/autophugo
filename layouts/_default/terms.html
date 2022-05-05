@@ -66,6 +66,7 @@
 
         <h1 id="{{ $term | urlize }}">{{ $term }}</h1>
         {{- $.Scratch.Set "content" $term_list }}
+        {{- $.Scratch.Set "disableComments" true}}
         {{- partial "render_img_column_flexrow.html" $ }}
 
     {{ end }}
