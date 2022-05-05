@@ -103,6 +103,7 @@
         </div>
     {{- end }}
 </div>
+{{ if .Site.Params.comments.enabled }}
 <div style="width: 100%;">
     <span style="margin-top: 2%;width: 100%;display: block"></span>
     <div style="width: 100%;">
@@ -115,3 +116,4 @@
     </section>
     </div>
 </div>
+{{ end }}
