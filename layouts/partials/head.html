@@ -27,6 +27,8 @@
 
 {{ template "_internal/google_analytics_async.html" . }}
 
+
+{{- /* Compare this snippet from layouts/partials/head.html: */}}
 {{- $font_awesome := resources.Get "css/font-awesome.min.css" -}}
 {{- $google_font := resources.Get "css/source-sans-pro.css" -}}
 {{- $main_css := resources.Get "css/main.css" -}}

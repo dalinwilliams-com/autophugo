@@ -97,8 +97,15 @@
         </div>
     {{- end }}
 </div>
-
-<div class="container">
-    {{- partial "comment/comments-form.html" $ }}
-    {{- partial "comment/comments-list.html" $ }}
+<div style="width: 100%;">
+    <span style="margin-top: 1%;width: 100%;"></span>
+    <div style="width: 100%;">
+    <section style="width: 100%;">
+        {{- partial "comment/comments-form.html" $ }}
+    </section>
+    <span style="margin-top: 2%;width: 100%;"></span>
+    <section style="width: 100%;">
+        {{- partial "comment/comments-list.html" $ }}
+    </section>
+    </div>
 </div>
