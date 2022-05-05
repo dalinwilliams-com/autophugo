@@ -280,6 +280,7 @@
                                 caption += '<div class="description">' +
                                     item.el.attr("description") + "</div>";
                             }
+                            // should be able to add comment modal here
                             let tax_elem = item.el.parent().find(".caption_tax");
                             if( tax_elem.length > 0 ) {
                                 caption += tax_elem[0].outerHTML;

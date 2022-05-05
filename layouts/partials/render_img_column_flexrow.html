@@ -97,7 +97,13 @@
         </div>
     {{- end }}
 </div>
-{{ if .Site.Params.comments.enabled }}
+
+
+{{ if and
+    (.Site.Params.comments.enabled)
+    (not ( in .Site.Params.comments.disableOnPages .RelPermalink))
+    (not ( $.Scratch.Get "disableComments" ))
+}}
 <div style="width: 100%;">
     <span style="margin-top: 2%;width: 100%;display: block"></span>
     <div style="width: 100%;">
