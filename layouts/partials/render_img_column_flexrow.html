@@ -98,13 +98,14 @@
     {{- end }}
 </div>
 
-
+{{/* Add the comment section */}}
 {{ if and
     (.Site.Params.comments.enabled)
     (not ( in .Site.Params.comments.disableOnPages .RelPermalink))
     (not ( $.Scratch.Get "disableComments" ))
+    (gt (len ($.Scratch.Get "content")) 0)
 }}
-<div style="width: 100%;">
+<div id="comments-section" class="waiting-for-load" style="width: 100%;">
     <span style="margin-top: 2%;width: 100%;display: block"></span>
     <div style="width: 100%;">
     <section style="width: 100%;">

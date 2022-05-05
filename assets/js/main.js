@@ -13,6 +13,7 @@
         var $window = $(window),
             $body = $('body'),
             $wrapper = $('#wrapper');
+            $comments = $('#comments-section');
 
         // Hack: Enable IE workarounds.
             if (skel.vars.IEVersion < 12)
@@ -27,10 +28,22 @@
 
                 // Add (and later, on load, remove) "loading" class.
                     $body.addClass('loading');
+                    //$comments.hide();
 
                     $window.on('load', function() {
                         window.setTimeout(function() {
                             $body.removeClass('loading');
+                            while($wrapper.is(':animated')) {
+                                console.log('waiting for wrapper to stop animating');
+                            }
+                            if ($wrapper.is(":before")) {
+                                console.log('after')
+                            }
+                            $comments.removeClass('waiting-for-load');
+                            $comments.addClass('ease-in');
+                            // window.setTimeout(function() {
+                            //     $comments.fadeIn("slow");
+                            // }, 700);
                         }, 100);
                     });
 
