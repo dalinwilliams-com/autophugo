@@ -5,14 +5,18 @@
     {{ range . }}{{ if eq $key $thisPost }}{{ $.Scratch.Set "counter" (add ($.Scratch.Get "counter") 1) }}{{ end }}{{ end }}
 {{ end }}
 {{ if gt ($.Scratch.Get "counter") 0 }}{{/*  only show comment section if there are comments  */}}
-  <div class="row mb-5">
+  <div style="width: 75%;display: block;text-align: center;padding-top: 2%;margin-left: auto;
+  margin-right: auto">
   {{ range $key, $val := $comments }}
     {{ range . }}
       {{ if eq $key $thisPost }}
-      <div class="col-sm-12 py-3">
-        <div class="shadow-sm px-4 py-4">
-          <i><span class="small">{{ .name }}</span><span class="small"> on {{ .date | dateFormat "Mon, 02 Jan. 2006, 15:04 MST" }}</span></i>
-          <p class="px-3 mt-3 mb-0">{{ .comment }}</p>
+      <div style="width:100%;display:inline-block;background-color:black;min-height:2px;"></div>
+      <div style="color:#a0a0a1;">
+        <div style="display: inline-block">
+          <b>From:</b> <i><span>{{ .name }}</span></i>:
+          <br>
+          <p>{{ .comment }}</p>
+          <div style="font-size:x-small;">{{ .date | dateFormat "Mon, 02 Jan. 2006, 15:04 MST" }}</div>
         </div>
       </div>
       {{ end }}
