@@ -15,6 +15,9 @@
                     {{ end }}
                     </ul>
                 </section>
+                <p class="copyright">
+                    &copy; {{ with .Site.Params.footer.copyright }}<a href="{{ .url }}">{{ .name | markdownify }}</a>, 2022{{ end }}.
+                </p>
 
                 {{- /* Unfortunately I cannot find a way to determine if disableKinds
                        is turned on, so I cannot check that for taxonomy or term.

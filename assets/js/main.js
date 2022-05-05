@@ -5,9 +5,11 @@
         var $window = $(window),
             $body = $('body'),
             $wrapper = $('#wrapper');
+            $comments = $('#comments-section');
 
         // Add (and later, on load, remove) "loading" class.
             $body.addClass('loading');
+            //$comments.hide();
             if( document.readyState != 'loading' ) {
                 window.setTimeout(function() {
                     $body.removeClass('loading');
@@ -16,6 +18,17 @@
                 $window.on('load', function() {
                     window.setTimeout(function() {
                         $body.removeClass('loading');
+                            while($wrapper.is(':animated')) {
+                                console.log('waiting for wrapper to stop animating');
+                            }
+                            if ($wrapper.is(":before")) {
+                                console.log('after')
+                            }
+                            $comments.removeClass('waiting-for-load');
+                            $comments.addClass('ease-in');
+                            // window.setTimeout(function() {
+                            //     $comments.fadeIn("slow");
+                            // }, 700);
                     }, 100);
                 });
             }

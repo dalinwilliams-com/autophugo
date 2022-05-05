@@ -1,26 +1,36 @@
-<div  style="display: block;justify-content: center;margin-left: auto;
-margin-right: auto;width: 50%;text-align: center;background: #1f2224; padding: 2%;">
+<div  id="comment-submission-wrapper">
+    {{if not (isset .Site.Params.comments "show_form")}}
+    <details id="comment-submission-form">
+        <summary id="comment-submission-form-summary">
+            <h2>{{ $.Site.Params.comments.prompt | default "Leave us a comment!" }}</h2>
+        </summary>
+    {{ else }}
     <div>
-      <h2>Leave a Comment</h2>
+        <h2>{{ $.Site.Params.comments.prompt | default "Leave us a comment!" }} </h2>
     </div>
     <div>
-      <form name="BlogComments" action="/comment-thanks" method="POST" netlify-honeypot="bot-field" netlify>
-        <input name="path" type="hidden" value="{{ .RelPermalink }}">
-        <input name="bot-field" type="hidden">
-        <div >
-          <label for="inputName"><h4 >Name</h4></label>
-          <input name="Name" type="name" class="form-control" id="inputName" placeholder="John Doe" required>
-        </div>
-        <div >
-          <label for="inputEmail"><h4 >Email address</h4></label>
-          <input name="Email" type="email" class="form-control" id="inputEmail" placeholder="john.doe@example.com" required>
-          <span class="small">Confidential, will not be shared with anyone.</span>
-        </div>
-        <div >
-          <label for="inputComment"><h4 >Comment</h4></label>
-          <textarea name="Comment" class="form-control" id="inputComment" placeholder="Your comment..." style="height: 150px; resize: none;" required></textarea>
-        </div>
-        <button type="submit" class="btn btn-primary px-3">Submit Comment</button>
-      </form>
+    {{ end }}
+        <form name="BlogComments" action="/comment-thanks" method="POST" netlify-honeypot="bot-field" netlify>
+            <input name="path" type="hidden" value="{{ .RelPermalink }}">
+            <input name="bot-field" type="hidden">
+            <div >
+                <label for="inputName"><h4 >Name</h4></label>
+                <input name="Name" type="name" class="form-control" id="inputName" placeholder="John Doe" required>
+            </div>
+            <div >
+                <label for="inputEmail"><h4 >Email address</h4></label>
+                <input name="Email" type="email" class="form-control" id="inputEmail" placeholder="john.doe@example.com" required>
+                <span class="small">Confidential, will not be shared with anyone.</span>
+            </div>
+            <div>
+                <label for="inputComment"><h4 >Comment</h4></label>
+                <textarea name="Comment" class="form-control" id="inputComment" placeholder="Your comment..." style="height: 150px; resize: none;" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary px-3">Submit Comment</button>
+        </form>
+    {{if not (isset .Site.Params.comments "show_form")}}
+    </details>
+    {{ else }}
     </div>
-  </div>
+    {{ end }}
+</div>
