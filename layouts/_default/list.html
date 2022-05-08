@@ -7,6 +7,7 @@
     {{- $full_quality := default 90 ($.Param "full_quality") }}
     {{- $filename_as_phototitle := default false ($.Param "filename_as_phototitle") }}
 
+
     {{- /* Calculate thumb_ and full_size from params, unless one is provided in the config. */}}
     {{- $thumb_size := default (printf "%dx q%d" $thumb_width $thumb_quality) ($.Param "thumb_size") }}
     {{- $full_resize_method := lower (default "resize" ($.Param "full_resize_method")) -}}
@@ -59,16 +60,40 @@
     {{- /* Get and reorder the list of images */}}
     {{- if .File }}
         {{- $imgglob := printf "%s" (path.Join .File.Dir "*") }}
+        {{- if $.Params.overridePath }}
+            {{- $imgglob = $.Params.imgglob | default (path.Join (index (split .File.Dir "/") 0) "*") }}
+        {{- end }}
         {{- $.Scratch.Set "imgglob" $imgglob }}
     {{- end }}
+
     {{- $imgglob := default "*" ($.Scratch.Get "imgglob") }}
     {{- $imageresources := where (resources.Match $imgglob) "ResourceType" "image" }}
+
+    {{/*
+        Applies the 'strict' policy. This allows only allows files specified
+        specified by their "src" tag to be presented
+
+        TODO: this loop costs an additional O(N X M) - the
+        original code needs to be refactored to help increase
+        performance.
+    */}}
+    {{- if isset $.Params "strict" }}
+        {{- $imageresources = first 0 $imageresources  }}
+        {{- range $elem_index, $elem_val := (where (resources.Match $imgglob) "ResourceType" "image" ) }}
+            {{- $img_path := $elem_val.Name }}
+            {{- with $.Params.resources }}
+                {{- range first 1 (where . "src" $img_path) }}
+                    {{- $imageresources = $imageresources | append $elem_val }}
+                {{- end }}
+            {{- end }}
+        {{- end }}
+    {{- end }}
+
     {{- $TODO_DELETE_images := $imageresources }}
 
     {{- /* Build some image objects */}}
     {{- $.Scratch.Set "images" (slice) }}
     {{- range $elem_index, $elem_val := $imageresources }}
-
         {{- /* Build some scratch for upcoming search... */}}
         {{- $img_dat := newScratch }}
         {{- $img_dat.Set "alt" "" }}
@@ -76,6 +101,7 @@
         {{- $img_dat.Set "weight" 0 }}
         {{- $img_dat.Set "taxonomies" dict }}
 
+        {{/* todo - replace with logic which can support an overridn path */}}
         {{- if $filename_as_phototitle }}
             {{- $filename := replace (path.Base $elem_val.Name) (path.Ext $elem_val.Name) "" }}
             {{- $img_dat.Set "phototitle" (humanize $filename) }}
@@ -83,16 +109,21 @@
             {{- $img_dat.Set "phototitle" "" }}
         {{- end }}
 
-        {{- /* Search the resources for a matching image src, save off details */}}
+        {{- /* Search the resources for a matching image src, save off details
+
+            TODO: The internal loop can be optimized by evicting "found" items from the resources object
+            The object will first need to be saved at the beginning of the loop, the be further processed
+        */}}
         {{- $img_path := $elem_val.Name }}
         {{- with $.Params.resources }}
+
             {{- range first 1 (where . "src" $img_path) }}
                 {{- $found := . }}
                 {{- if isset . "alt" }}{{ $img_dat.Set "alt" .alt }}{{ end }}
                 {{- if isset . "phototitle" }}{{ $img_dat.Set "phototitle" .phototitle }}{{ end }}
                 {{- if isset . "description" }}{{ $img_dat.Set "description" .description }}{{ end }}
                 {{- if isset . "weight" }}{{ $img_dat.Set "weight" .weight }}{{ end }}
-                
+
                 {{- /* Build an dict of arrays - the keys are taxonomy name, values are an array of terms in that taxonomy */}}
                 {{- range $taxname, $taxterms := $.Site.Taxonomies }}
                     {{- if isset $found $taxname }}
@@ -107,6 +138,88 @@
         {{- $.Scratch.Set "orientation" 1 }}
         {{- with $elem_val.Exif }}
             {{- $.Scratch.Set "orientation" .Tags.Orientation }}
+
+            {{/* if description et.al are not set, set these tags here */}}
+            {{/* first, we extract the title from the image description */}}
+            {{ if (isset .Tags "ImageDescription") }}
+                {{- if (not ($img_dat.Get "phototitle")) }}
+                        {{- $img_dat.Set "phototitle" .Tags.ImageDescription}}
+                {{- end }}
+            {{ end }}
+
+            {{/* we use UserComment for rating, alt text, description, and category/tag information*/}}
+            {{- if (isset .Tags "UserComment") }}
+                {{- if (eq (substr .Tags.UserComment 0) "{") }}
+
+                {{- else }}
+                    {{- if (not ($img_dat.Get "description")) }}
+                        {{- $img_dat.Set "description" (replace .Tags.UserComment "ASCII" "")}}
+                    {{- end }}
+                {{- end }}
+                {{/*
+                    TODO: Complete and propagate this to the client at a later time.
+                    This information can be saved directly to the relevant _index.md
+                */}}
+                {{/* set $img_dat.taxonomies to dictionaries of tag and category:
+                    tags: [
+                        "foo",
+                        "bar"
+                    ],
+                    categories: [
+                        "bar",
+                        "baz"
+                    ]
+
+                    $img_dat takes a map of arrays, where the key is the taxonomy name,
+                    and the values are the values of the taxonomy.
+                */}}
+                {{/*
+                    {{- $jsonData :=  .Tags.UserComment  | transform.Unmarshal }}
+                    {{ print (index $jsonData "description" ) }}
+
+                    {{- if and
+                        (not ($img_dat.Get "description"))
+                        (isset $jsonData "description")
+                    }}
+                        {{- $img_dat.Set "description" (index $jsonData "description" ) }}
+                    {{- end }}
+
+                    {{- if and
+                        (not ($img_dat.Get "tag"))
+                        (isset $jsonData "tag")
+                    }}
+                        {{- $img_dat.Set "description" (index $jsonData "description" ) }}
+                    {{- end }}
+                */}}
+            {{- end}}
+            {{/*
+                {{ if (isset .Tags "ImageDescription")}}
+                    {{- if  and
+                        (not ($img_dat.Get "phototitle"))
+                        (isset $jsonData "phototitle")
+                    }}
+                    {{- $img_dat.Set "description" .Tags.ImageDescription }}
+                {{- end }}
+                {{- range $key, $value := $jsonData}}
+                    {{ printf "%s: %v -> \n\n" $key $value }}
+                {{ end }}
+                {{- range $key, $val := .Tags }}
+                    {{- printf "%s: %v -> \n\n" $key $val }}
+                {{- end }}
+                {{- if  and
+                    (not ($img_dat.Get "phototitle"))
+                    (isset $jsonData "phototitle")
+                }}
+                    {{- $img_dat.Set "phototitle" .Tags.ImageDescription }}
+                {{- end }}
+                {{- if (not $img_dat.Get "alt") }}
+                    {{- $img_dat.Set "alt" .Tags.ImageDescription }}
+                {{- end }}
+                {{- if (not $img_dat.Get "description") }}
+                    {{- $img_dat.Set "description" .Tags.ImageDescription }}
+                {{- end }}
+                {{- print  .Tags.ImageDescription }}
+            */}}
         {{- end }}
         {{- $orientation := $.Scratch.Get "orientation" }}
         {{- /* TODO: handle flipped orientations */}}
@@ -130,6 +243,7 @@
         {{- $description := $img_dat.Get "description" }}
         {{- $weight := $img_dat.Get "weight" }}
         {{- $taxonomies := $img_dat.Get "taxonomies" }}
+
         {{- $thumb := $elem_val.Resize $thumb_resize_cmd }}
 
         {{- $.Scratch.Set "full_resized" $thumb }}
