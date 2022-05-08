@@ -15,7 +15,7 @@
         <div style="display: inline-block">
           <b>From:</b> <i><span>{{ .name }}</span></i>:
           <br>
-          <p>{{ .comment | markdownify }}</p>
+          <p>{{ .comment | markdownify | safeHTML}}</p>
           <div style="font-size:x-small;">{{ .date | dateFormat "Mon, 02 Jan. 2006, 15:04 MST" }}</div>
         </div>
       </div>
