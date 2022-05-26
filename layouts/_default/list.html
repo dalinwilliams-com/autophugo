@@ -44,7 +44,7 @@
                 {{- $.Scratch.Set "rotation" " r270" }}
             {{- end }}
             {{- $rotation := $.Scratch.Get "rotation" }}
-            {{- $resize_cmd := printf "%s%s" $thumb_size $rotation }}
+            {{- $resize_cmd := printf "%s%s webp" $thumb_size $rotation }}
             {{- $thumb := $image.Resize $resize_cmd }}
             {{- $new_sect := dict "type" "link" "title" $title "link" $link "thumb" $thumb "weight" $weight }}
 
@@ -234,7 +234,7 @@
             {{- $.Scratch.Set "rotation" " r270" }}
         {{- end }}
         {{- $rotation := $.Scratch.Get "rotation" }}
-        {{- $thumb_resize_cmd := printf "%s%s" $thumb_size $rotation }}
+        {{- $thumb_resize_cmd := printf "%s%s webp" $thumb_size $rotation }}
         {{- $full_resize_cmd := printf "%s%s" $full_size $rotation }}
 
         {{- /* Save off the image object */}}
