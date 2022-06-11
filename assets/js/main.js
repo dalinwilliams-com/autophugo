@@ -283,7 +283,7 @@
                                     'class="download-button"><a href="' +
                                     item.el.attr("download_file") + '" download="' +
                                     item.el.attr("download_name") + '"' +
-                                    'data-goatcounter-click="'+ $(location).attr('href') + '/' + item.el.attr('orig_name') +'"' +
+                                    'data-goatcounter-click="'+ item.el.attr('orig_name') +'"' +
                                     'data-goatcounter-title="Photo Downloaded"' +
                                     'data-goatcounter-referrer="' + item.el.attr("download_file")  + '"' +
                                     '><i class="fa fa-download"></i></a></div>' +
