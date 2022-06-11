@@ -72,7 +72,8 @@
                             {{- if $downloadable }}
                                 download_file="{{ (cond $orig_download .orig .full).RelPermalink }}"
                             {{- end }}
-                            orig_name="{{ .phototitle | default (md5 $filename) }}"
+                            download_name="{{ .phototitle | default (md5 $filename) }}"
+                            orig_name="{{ $filename }}"
                             href="{{ .full.RelPermalink }}"
                             {{- if isset $.Site.Params "goatcounter" }}
                                 data-goatcounter-click="{{ $.Permalink }}{{ $filename }}"
