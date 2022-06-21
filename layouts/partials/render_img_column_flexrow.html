@@ -75,10 +75,10 @@
                             download_name="{{ .phototitle | default (md5 $filename) }}"
                             orig_name="{{ $filename }}"
                             href="{{ .full.RelPermalink }}"
-                            {{- if isset $.Site.Params "goatcounter" }}
-                                data-goatcounter-click="{{ $.Permalink }}{{ $filename }}"
-                                data-goatcounter-title="Photo Tile Clicked"
-                                data-goatcounter-referrer="{{ $.Permalink }}"
+                            {{ if  isset .Site.Params "goatcounter" }}
+                            data-goatcounter-click="{{ $.Permalink }}{{ $filename }}"
+                            data-goatcounter-title="Photo Tile Clicked"
+                            data-goatcounter-referrer="{{ $.Permalink }}"
                             {{- end }}>
                         <div id="image_number_{{ .index }}" class="gallery-item-marker"></div>
                         <img src="{{ .thumb.RelPermalink }}"
