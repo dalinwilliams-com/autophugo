@@ -1,13 +1,5 @@
 (function($) {
 
-    skel.breakpoints({
-        xlarge: '(max-width: 1680px)',
-        large: '(max-width: 1280px)',
-        medium: '(max-width: 980px)',
-        small: '(max-width: 736px)',
-        xsmall: '(max-width: 480px)'
-    });
-
     $(function() {
 
         var $window = $(window),
@@ -15,24 +7,16 @@
             $wrapper = $('#wrapper');
             $comments = $('#comments-section');
 
-        // Hack: Enable IE workarounds.
-            if (skel.vars.IEVersion < 12)
-                $body.addClass('ie');
-
-        // Touch?
-            if (skel.vars.mobile)
-                $body.addClass('touch');
-
-        // Transitions supported?
-            if (skel.canUse('transition')) {
-
-                // Add (and later, on load, remove) "loading" class.
-                    $body.addClass('loading');
-                    //$comments.hide();
-
-                    $window.on('load', function() {
-                        window.setTimeout(function() {
-                            $body.removeClass('loading');
+        // Add (and later, on load, remove) "loading" class.
+            $body.addClass('loading');
+            if( document.readyState != 'loading' ) {
+                window.setTimeout(function() {
+                    $body.removeClass('loading');
+                }, 100);
+            } else {
+                $window.on('load', function() {
+                    window.setTimeout(function() {
+                        $body.removeClass('loading');
                             while($wrapper.is(':animated')) {
                                 console.log('waiting for wrapper to stop animating');
                             }
@@ -44,25 +28,24 @@
                             // window.setTimeout(function() {
                             //     $comments.fadeIn("slow");
                             // }, 700);
-                        }, 100);
-                    });
-
-                // Prevent transitions/animations on resize.
-                    var resizeTimeout;
-
-                    $window.on('resize', function() {
-
-                        window.clearTimeout(resizeTimeout);
-
-                        $body.addClass('resizing');
-
-                        resizeTimeout = window.setTimeout(function() {
-                            $body.removeClass('resizing');
-                        }, 100);
-
-                    });
-
+                    }, 100);
+                });
             }
+
+        // Prevent transitions/animations on resize.
+            var resizeTimeout;
+
+            $window.on('resize', function() {
+
+                window.clearTimeout(resizeTimeout);
+
+                $body.addClass('resizing');
+
+                resizeTimeout = window.setTimeout(function() {
+                    $body.removeClass('resizing');
+                }, 100);
+
+            });
 
         // Scroll back to top.
             $window.scrollTop(0);
@@ -171,25 +154,6 @@
         // Footer.
             var $footer = $('#footer');
 
-            // Copyright.
-            // This basically just moves the copyright line to the end of the *last* sibling of its current parent
-            // when the "medium" breakpoint activates, and moves it back when it deactivates.
-                $footer.find('.copyright').each(function() {
-
-                    var $this = $(this),
-                        $parent = $this.parent(),
-                        $lastParent = $parent.parent().children().last();
-
-                    skel
-                        .on('+medium', function() {
-                            $this.appendTo($lastParent);
-                        })
-                        .on('-medium', function() {
-                            $this.appendTo($parent);
-                        });
-
-                });
-
         // Main.
             var $main = $('#main');
 
@@ -218,16 +182,6 @@
                         // Hide original img.
                             $image_img.hide();
 
-                    // Hack: IE<11 doesn't support pointer-events, which means clicks to our image never
-                    // land as they're blocked by the thumbnail's caption overlay gradient. This just forces
-                    // the click through to the image.
-                        if (skel.vars.IEVersion < 11)
-                            $this
-                                .css('cursor', 'pointer')
-                                .on('click', function() {
-                                    $image.trigger('click');
-                                });
-
                 });
 
             // Thumbs Index.
@@ -254,17 +208,6 @@
 
                         // Hide original img.
                             $link_img.hide();
-
-                    // Hack: IE<11 doesn't support pointer-events, which means clicks to our link never
-                    // land as they're blocked by the thumbnail's caption overlay gradient. This just forces
-                    // the click through to the link.
-                        if (skel.vars.IEVersion < 11)
-                            $this
-                                .css('cursor', 'pointer')
-                                .on('click', function() {
-                                    $link.trigger('click');
-                                });
-
                 });
 
                 var gallery_items = $(".gallery-item").sort(
@@ -275,6 +218,7 @@
                     );
                 gallery_items.magnificPopup({
                     type: "image",
+                    mainClass: "mfp-img-mobile",
                     image: {
                         titleSrc: function(item) {
                             let caption = '';
@@ -295,8 +239,8 @@
                                     'data-goatcounter-title="Photo Downloaded"' +
                                     'data-goatcounter-referrer="' + item.el.attr("download_file")  + '"' +
                                     '></i></a></div>' +
-                                    '<div class="caption-surround">';
                             }
+                            caption += '<div class="caption-surround">';
                             if( item.el.attr("phototitle") != "" ) {
                                 caption += "<h2>" + item.el.attr("phototitle") + "</h2>";
                             }
@@ -319,12 +263,26 @@
                     },
                     callbacks: {
                         change: function() {
-                            window.location.hash = this.currItem.el.attr("id");
+                            // Replace the current history state with a URL with
+                            // a new hash part.  The hash part tells the site to load
+                            // a specific image in fullscreen.  Replacing the history
+                            // causes the back and forward buttons to now go to the
+                            // URL with the hash version...  Simply changing the URL
+                            // will instead cause a browser to add a new URL to the
+                            // history with the hash part.  Then if you look at a ton
+                            // of images on one page, they'll all clutter up your history
+                            // and you'll have to back through them all to get back to
+                            // what seems like the previous page.  I think this
+                            // replaceState version is a better behavior.
+                            const hash = "#" + this.currItem.el.attr("id");
+                            window.history.replaceState(undefined, undefined, hash);
                         },
                         close: function() {
-                            window.location.hash = "";
+                            // Clear the hash part without adding new things to the history
+                            window.history.replaceState(undefined, undefined, "");
                         },
                     },
+                    fixedContentPos: true,
                 });
 
                 // If there's a fragment id, see if it's an image index

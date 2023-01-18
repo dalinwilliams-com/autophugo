@@ -89,7 +89,6 @@
         {{- end }}
     {{- end }}
 
-    {{- $TODO_DELETE_images := $imageresources }}
 
     {{- /* Build some image objects */}}
     {{- $.Scratch.Set "images" (slice) }}
@@ -251,12 +250,14 @@
             {{- $.Scratch.Set "full_resized" ($elem_val.Resize $full_resize_cmd) }}
         {{- else if (eq $full_resize_method "fit") }}
             {{- $.Scratch.Set "full_resized" ($elem_val.Fit $full_resize_cmd) }}
+        {{- else if (eq $full_resize_method "none") }}
+            {{- $.Scratch.Set "full_resized" $elem_val }}
         {{- else }}
             {{- errorf "Invalid 'full_resize_method' specified!  Must be resize or fit." }}
         {{- end }}
         {{- $full := $.Scratch.Get "full_resized" }}
 
-        {{- $new_img := dict "type" "image" "index" $elem_index "image" $elem_val "thumb" $thumb "full" $full "alt" $alt "phototitle" $phototitle "description" $description "weight" $weight  "orig" $elem_val "taxonomies" $taxonomies }}
+        {{- $new_img := dict "type" "image" "image" $elem_val "thumb" $thumb "full" $full "alt" $alt "phototitle" $phototitle "description" $description "weight" $weight  "orig" $elem_val "taxonomies" $taxonomies }}
 
         {{- $images := $.Scratch.Get "images" }}
         {{- $images := $images | append $new_img }}
