@@ -5,7 +5,7 @@
 
 {{ if  isset .Site.Params "goatcounter" }}
 {{- $goat_counter := resources.Get "js/goatcounter.js" -}}
-{{- $custom_js := slice $jquery $mg_pop $skel $main $util $goat_counter | resources.Concat "js/custom.js" | resources.Minify | resources.Fingerprint -}}
+{{- $custom_js := slice $jquery $mg_pop $main $util $goat_counter | resources.Concat "js/custom.js" | resources.Minify | resources.Fingerprint -}}
 {{ with .Site.Params.goatcounter }}<script data-goatcounter="{{ . }}/count"  src="{{ $custom_js.RelPermalink }}" integrity="{{ $custom_js.Data.Integrity }}"></script>{{end}}
 <noscript>
     {{ with .Site.Params.goatcounter }} <img src="{{ . }}/count?p=/noscript"> {{ end }}

@@ -224,21 +224,11 @@
                             let caption = '';
                             if(item.el.attr("downloadable") == "true"){
                                 caption += '<div title="Download" ' +
-                                    'class="download-button"' +
-                                    'data-goatcounter-click="'+ item.el.attr('orig_name') +'"' +
-                                    'data-goatcounter-title="Photo Downloaded"' +
-                                    'data-goatcounter-referrer="' + item.el.attr("download_file")  + '"' +
-                                    '><a href="' +
+                                    'class="download-button"><a href="' +
                                     item.el.attr("download_file") + '" download="' +
-                                    item.el.attr("download_name") + '"' +
-                                    'data-goatcounter-click="'+ item.el.attr('orig_name') +'"' +
-                                    'data-goatcounter-title="Photo Downloaded"' +
-                                    'data-goatcounter-referrer="' + item.el.attr("download_file")  + '"' +
-                                    '><i class="fa fa-download"' +
-                                    'data-goatcounter-click="'+ item.el.attr('orig_name') +'"' +
-                                    'data-goatcounter-title="Photo Downloaded"' +
-                                    'data-goatcounter-referrer="' + item.el.attr("download_file")  + '"' +
-                                    '></i></a></div>' +
+                                    item.el.attr("orig_name") +
+                                    '"><i class="fa fa-download"></i></a></div>' +
+                                    '<div class="caption-surround">';
                             }
                             caption += '<div class="caption-surround">';
                             if( item.el.attr("phototitle") != "" ) {
