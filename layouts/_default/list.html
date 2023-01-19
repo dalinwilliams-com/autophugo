@@ -148,13 +148,90 @@
 
             {{/* we use UserComment for rating, alt text, description, and category/tag information*/}}
             {{- if (isset .Tags "UserComment") }}
-                {{- if (eq (substr .Tags.UserComment 0) "{") }}
+                {{/*- if (eq (substr .Tags.UserComment 5 1) "{") }}
+                    {{ print (replace .Tags.UserComment "ASCII" "") }}
+                {{- end */}}
 
+
+                {{- if (eq (substr .Tags.UserComment 5 1) "{") }}
+                    {{- $jsonData :=  (replace .Tags.UserComment "ASCII" "")   | transform.Unmarshal }}
+                    {{- if (and (isset $jsonData "alt") (not ($img_dat.Get "alt"))) }}
+                        {{- $img_dat.Set "alt" (index $jsonData "alt" ) }}
+                    {{- end }}
+
+                    {{- if (and (isset $jsonData "description") (not ($img_dat.Get "description"))) }}
+                        {{- $img_dat.Set "description" (index $jsonData "description" ) }}
+                    {{- end }}
+
+                    {{- if (and (isset $jsonData "phototitle") (not ($img_dat.Get "phototitle"))) }}
+                        {{- $img_dat.Set "phototitle" (index $jsonData "phototitle" ) }}
+                    {{- end }}
+
+                    {{- if (and (isset $jsonData "weight") (not ($img_dat.Get "weight"))) }}
+                        {{- $img_dat.Set "weight" (index $jsonData "weight" ) }}
+                    {{- end }}
+
+                    {{- if (and (isset $jsonData "categories") (not ($img_dat.Get "categories"))) }}
+                        {{ print (index $.Params.resources 0) }}
+                        {{ printf "%v" $.Site.Taxonomies }}
+                        {{- $categories :=  (slice "") }}
+                        {{- $tags := (slice "") }}
+
+                        {{- $categories = $categories | append (split (index $jsonData "categories") "," ) }}
+
+                        {{- $tags = $tags | append (split (index $jsonData "tags") "," ) }}
+
+
+                        {{- $img_dat.Set "taxonomies"  (dict "categories" $categories "tags" $tags ) }}
+
+
+
+
+                        {{/*
+
+                            {{- $found := . }}
+                                {{- if isset . "categories" }}
+                                    {{- $categories = $categories | append (split .categories "," ) }}
+                                {{- end }}
+                                {{- if isset . "tags" }}
+                                    {{- $tags = $tags | append (split .tags "," ) }}
+                                {{- end }}
+                            {{ $img_dat.Set "taxonomies" (dict "categories" (slice "") "tags" (slice "" ))  }}
+
+
+
+                            {{ print (split (index $jsonData "categories") "," ) }}
+    
+                            (dict "categories" (slice "") "tags" (slice "" )) 
+                            {{ print $img_dat }}
+
+                            {{- $img_dat.Set "taxonomies" $taxonomies}}
+
+                            {{ print $img_dat }}
+
+                            {{ print (split (index $jsonData "categories") "," ) }}
+                        {{- $img_dat.Set "categories" (split (index $jsonData "categories") "," ) }}
+                        */}}
+                    {{- end }}
+
+                    {{- if (and (isset $jsonData "tags") (not ($img_dat.Get "tags"))) }}
+                        {{- $img_dat.Set "tags" (split (index $jsonData "tags") "," ) }}
+                    {{- end }}
                 {{- else }}
                     {{- if (not ($img_dat.Get "description")) }}
                         {{- $img_dat.Set "description" (replace .Tags.UserComment "ASCII" "")}}
                     {{- end }}
                 {{- end }}
+
+                {{/*
+                    {{- $jsonData :=  .Tags.UserComment  | transform.Unmarshal }}
+                    {- if (and
+                        (not ($img_dat.Get "description"))
+                        (isset $jsonData "description"))
+                    }}
+                        {{- $img_dat.Set "description" (index $jsonData "description" ) }}
+                    {{- end }}
+                */}}
                 {{/*
                     TODO: Complete and propagate this to the client at a later time.
                     This information can be saved directly to the relevant _index.md
