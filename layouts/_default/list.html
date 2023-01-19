@@ -148,13 +148,8 @@
 
             {{/* we use UserComment for rating, alt text, description, and category/tag information*/}}
             {{- if (isset .Tags "UserComment") }}
-                {{/*- if (eq (substr .Tags.UserComment 5 1) "{") }}
-                    {{ print (replace .Tags.UserComment "ASCII" "") }}
-                {{- end */}}
-
-
                 {{- if (eq (substr .Tags.UserComment 5 1) "{") }}
-                    {{- $jsonData :=  (replace .Tags.UserComment "ASCII" "")   | transform.Unmarshal }}
+                    {{ $jsonData :=  (replace .Tags.UserComment "ASCII" "")   | transform.Unmarshal }}
                     {{- if (and (isset $jsonData "alt") (not ($img_dat.Get "alt"))) }}
                         {{- $img_dat.Set "alt" (index $jsonData "alt" ) }}
                     {{- end }}
@@ -172,8 +167,6 @@
                     {{- end }}
 
                     {{- if (and (isset $jsonData "categories") (not ($img_dat.Get "categories"))) }}
-                        {{ print (index $.Params.resources 0) }}
-                        {{ printf "%v" $.Site.Taxonomies }}
                         {{- $categories :=  (slice "") }}
                         {{- $tags := (slice "") }}
 
@@ -184,34 +177,6 @@
 
                         {{- $img_dat.Set "taxonomies"  (dict "categories" $categories "tags" $tags ) }}
 
-
-
-
-                        {{/*
-
-                            {{- $found := . }}
-                                {{- if isset . "categories" }}
-                                    {{- $categories = $categories | append (split .categories "," ) }}
-                                {{- end }}
-                                {{- if isset . "tags" }}
-                                    {{- $tags = $tags | append (split .tags "," ) }}
-                                {{- end }}
-                            {{ $img_dat.Set "taxonomies" (dict "categories" (slice "") "tags" (slice "" ))  }}
-
-
-
-                            {{ print (split (index $jsonData "categories") "," ) }}
-    
-                            (dict "categories" (slice "") "tags" (slice "" )) 
-                            {{ print $img_dat }}
-
-                            {{- $img_dat.Set "taxonomies" $taxonomies}}
-
-                            {{ print $img_dat }}
-
-                            {{ print (split (index $jsonData "categories") "," ) }}
-                        {{- $img_dat.Set "categories" (split (index $jsonData "categories") "," ) }}
-                        */}}
                     {{- end }}
 
                     {{- if (and (isset $jsonData "tags") (not ($img_dat.Get "tags"))) }}
@@ -222,80 +187,7 @@
                         {{- $img_dat.Set "description" (replace .Tags.UserComment "ASCII" "")}}
                     {{- end }}
                 {{- end }}
-
-                {{/*
-                    {{- $jsonData :=  .Tags.UserComment  | transform.Unmarshal }}
-                    {- if (and
-                        (not ($img_dat.Get "description"))
-                        (isset $jsonData "description"))
-                    }}
-                        {{- $img_dat.Set "description" (index $jsonData "description" ) }}
-                    {{- end }}
-                */}}
-                {{/*
-                    TODO: Complete and propagate this to the client at a later time.
-                    This information can be saved directly to the relevant _index.md
-                */}}
-                {{/* set $img_dat.taxonomies to dictionaries of tag and category:
-                    tags: [
-                        "foo",
-                        "bar"
-                    ],
-                    categories: [
-                        "bar",
-                        "baz"
-                    ]
-
-                    $img_dat takes a map of arrays, where the key is the taxonomy name,
-                    and the values are the values of the taxonomy.
-                */}}
-                {{/*
-                    {{- $jsonData :=  .Tags.UserComment  | transform.Unmarshal }}
-                    {{ print (index $jsonData "description" ) }}
-
-                    {{- if and
-                        (not ($img_dat.Get "description"))
-                        (isset $jsonData "description")
-                    }}
-                        {{- $img_dat.Set "description" (index $jsonData "description" ) }}
-                    {{- end }}
-
-                    {{- if and
-                        (not ($img_dat.Get "tag"))
-                        (isset $jsonData "tag")
-                    }}
-                        {{- $img_dat.Set "description" (index $jsonData "description" ) }}
-                    {{- end }}
-                */}}
             {{- end}}
-            {{/*
-                {{ if (isset .Tags "ImageDescription")}}
-                    {{- if  and
-                        (not ($img_dat.Get "phototitle"))
-                        (isset $jsonData "phototitle")
-                    }}
-                    {{- $img_dat.Set "description" .Tags.ImageDescription }}
-                {{- end }}
-                {{- range $key, $value := $jsonData}}
-                    {{ printf "%s: %v -> \n\n" $key $value }}
-                {{ end }}
-                {{- range $key, $val := .Tags }}
-                    {{- printf "%s: %v -> \n\n" $key $val }}
-                {{- end }}
-                {{- if  and
-                    (not ($img_dat.Get "phototitle"))
-                    (isset $jsonData "phototitle")
-                }}
-                    {{- $img_dat.Set "phototitle" .Tags.ImageDescription }}
-                {{- end }}
-                {{- if (not $img_dat.Get "alt") }}
-                    {{- $img_dat.Set "alt" .Tags.ImageDescription }}
-                {{- end }}
-                {{- if (not $img_dat.Get "description") }}
-                    {{- $img_dat.Set "description" .Tags.ImageDescription }}
-                {{- end }}
-                {{- print  .Tags.ImageDescription }}
-            */}}
         {{- end }}
         {{- $orientation := $.Scratch.Get "orientation" }}
         {{- /* TODO: handle flipped orientations */}}
