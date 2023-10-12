@@ -139,15 +139,10 @@
             {{- $.Scratch.Set "orientation" .Tags.Orientation }}
 
             {{/* if description et.al are not set, set these tags here */}}
-            {{/* first, we extract the title from the image description */}}
-            {{ if (isset .Tags "ImageDescription") }}
-                {{- if (not ($img_dat.Get "phototitle")) }}
-                        {{- $img_dat.Set "phototitle" .Tags.ImageDescription}}
-                {{- end }}
-            {{ end }}
-
             {{/* we use UserComment for rating, alt text, description, and category/tag information*/}}
             {{- if (isset .Tags "UserComment") }}
+                {{/* printf "%#v" . */}}
+
                 {{- if (eq (substr .Tags.UserComment 5 1) "{") }}
                     {{ $jsonData :=  (replace .Tags.UserComment "ASCII" "")   | transform.Unmarshal }}
                     {{- if (and (isset $jsonData "alt") (not ($img_dat.Get "alt"))) }}
@@ -158,8 +153,8 @@
                         {{- $img_dat.Set "description" (index $jsonData "description" ) }}
                     {{- end }}
 
-                    {{- if (and (isset $jsonData "phototitle") (not ($img_dat.Get "phototitle"))) }}
-                        {{- $img_dat.Set "phototitle" (index $jsonData "phototitle" ) }}
+                    {{- if (and (isset $jsonData "title") (not ($img_dat.Get "phototitle"))) }}
+                        {{- $img_dat.Set "phototitle" (index $jsonData "title" ) }}
                     {{- end }}
 
                     {{- if (and (isset $jsonData "weight") (not ($img_dat.Get "weight"))) }}
@@ -188,6 +183,13 @@
                     {{- end }}
                 {{- end }}
             {{- end}}
+
+            {{/* first, we extract the title from the image description */}}
+            {{ if (isset .Tags "ImageDescription") }}
+                {{- if (not ($img_dat.Get "phototitle")) }}
+                        {{- $img_dat.Set "phototitle" .Tags.ImageDescription}}
+                {{- end }}
+            {{ end }}
         {{- end }}
         {{- $orientation := $.Scratch.Get "orientation" }}
         {{- /* TODO: handle flipped orientations */}}
