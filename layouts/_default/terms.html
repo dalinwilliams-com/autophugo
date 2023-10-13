@@ -6,6 +6,7 @@
 
     {{- $.Scratch.Set "tags" (dict) }}
 
+    {{- $.Scratch.Set "currPage" $.Page.Title }}
     {{- range $.Site.Pages }}
         {{- $page := . }}
 
@@ -30,7 +31,6 @@
             {{- $new_list := $cur_entry | append $page_desc }}
             {{- $.Scratch.Set "tags" (merge ($.Scratch.Get "tags") (dict $tag $new_list)) }}
         {{ end }}
-
         {{- /* Enumerate the tags on the resource images */}}
         {{- with $page.File }}
             {{- range where (resources.Match (path.Join $page.File.Dir "*"))  "ResourceType" "image"  }}
@@ -47,17 +47,20 @@
                         {{- if (eq (substr $exif.Tags.UserComment 5 1) "{") }}
                             {{- $jsonData :=  (replace $exif.Tags.UserComment "ASCII" "")  | transform.Unmarshal }}
                             {{- with $jsonData }}
+                                {{/* printf "%#v" . */}}
                                 {{- if  (index (split (index . $.Data.Plural) "," ) 0)}}
                                     {{- range (split (index . $.Data.Plural) "," )}}
                                         {{- $tag := . }}
+                                        {{/* printf "%#v" $tag */}}
                                         {{- $thumb := $img.Resize $thumb_size }}
                                         {{- /* Create an object representing this tag term entry */}}
                                         {{- $url := ( printf "/%s/#%s" $filedir ( md5 $filename ) ) | relURL }}
-                                        {{- $img_desc := dict "type" "link" "link" $url "title" $jsonData.phototitle "thumb" $thumb }}
+                                        {{- $img_desc := dict "type" "link" "link" $url "title" $exif.Tags.ImageDescription "thumb" $thumb }}
                                         {{- /* Add this object to the list */}}
                                         {{- $cur_entry := (index ($.Scratch.Get "tags") $tag) }}
                                         {{- $new_list := $cur_entry | append $img_desc }}
                                         {{- $.Scratch.Set "tags" (merge ($.Scratch.Get "tags") (dict $tag $new_list)) }}
+                                        {{/* printf "%#v" (dict $tag $new_list) */}}
                                     {{- end }}
                                 {{- end }}
                             {{- end }}
@@ -84,9 +87,48 @@
                         {{- end }}
                     {{- end }}
                 {{- end }}
+
+                {{/* If the file name comes in the form STUFF_a-set-of-tags_which-are-good_UUID.jpg, split out the middle bits and add them to tags - "A Set Of Tags", "Which Are Good" */}}
+                {{- if (eq ($.Scratch.Get "currPage") "Tags")}}
+                    {{ if (gt (len (split $filename "_")) 2) }}
+                        {{ $fileNameTags := ((after 1 ((after  1 (split $filename "_")) | collections.Reverse) | uniq )) }}
+                        {{- if (not (and (eq (len $fileNameTags) 1) (eq (index $fileNameTags 0) ""))) }}
+                            {{- $tagSet := slice }}
+                            {{- range $newTag := $fileNameTags }}
+                                {{- if  (not (eq $newTag "")) }}
+                                    {{- if (strings.Contains $newTag "&") }}
+                                        {{- $tagSet = $tagSet | append (split $newTag "&")}}
+                                    {{- else }}
+                                       {{- $tagSet = $tagSet | append $newTag }}
+                                    {{- end }}
+                                {{- end }}
+                            {{- end }}
+                            {{- range $newTag := $tagSet }}
+                                {{- $newTag = (replaceRE  `(-?[0-9]{4}-[0-9]{2}-?)` "" $newTag ) }}
+                                {{- $newTag = (replaceRE  `(-?[0-9]{4})` "" $newTag ) }}
+                                {{- $newTag = (title (replace $newTag "-" " " ))}}
+                                {{/* If this tag is a list of names (signified by aan &), continue to delineate */}}
+
+                                {{- $thumb := $img.Resize $thumb_size }}
+                                {{- /* Create an object representing this tag term entry */}}
+                                {{- $url := ( printf "/%s/#%s" $filedir ( md5 $filename ) ) | relURL }}
+                                {{/* printf "%s\n" $url */}}
+                                {{- $img_desc := dict "type" "link" "link" $url "thumb" $thumb }}
+                                {{- /* Add this object to the list */}}
+                                {{- $cur_entry := (index ($.Scratch.Get "tags") $newTag) }}
+                                {{- $new_list := $cur_entry | append $img_desc }}
+                                {{- $.Scratch.Set "tags" (merge ($.Scratch.Get "tags") (dict $newTag $new_list)) }}
+                                {{/* printf "%#v" $newTag */}}
+                            {{- end }}
+                        {{- end }}
+                    {{- end }}
+                {{- end }}
             {{- end }}
         {{- end }}
     {{- end }}
+    {{/* printf "%v" ($.Scratch.Get "tags") */}}
+    {{/*- $.Scratch.Set "tags" (sort ($.Scratch.Get "tags") "weight") */}}
+
 
 
     {{- range $term, $term_list := $.Scratch.Get "tags" }}
