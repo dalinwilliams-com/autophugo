@@ -93,7 +93,7 @@
                                 {{- range $terms }}
                                     <div class="tax_term">
                                         {{- $url := ( printf "/%s/#%s" ($taxname | urlize) ( . | urlize ) ) | relURL }}
-                                        <a href="{{ $url }}">{{ . | humanize }}</a>
+                                        <a href="{{ $url }}">{{ (title   (replace . "-" " " ) ) }}</a>
                                     </div>
                                 {{- end }}
                             {{- end }}

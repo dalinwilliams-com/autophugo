@@ -135,6 +135,7 @@
         {{- end }}
 
         {{- $.Scratch.Set "orientation" 1 }}
+
         {{- with $elem_val.Exif }}
             {{- $.Scratch.Set "orientation" .Tags.Orientation }}
 
@@ -191,6 +192,27 @@
                 {{- end }}
             {{ end }}
         {{- end }}
+
+        {{- /* If the file name comes in the form STUFF_a-set-of-tags_which-are-good_UUID.jpg, split out the middle bits and add them to tags - "A Set Of Tags", "Which Are Good" */}}
+        {{- if (and (gt (len (split $elem_val.Name "/")) 1) (gt (len (split (index (last 1 (split $elem_val.Name "/")) 0) "_")) 2)) }}
+            {{- $fileNameTags := ((after 1 ((after  1 (split (index (last 1 (split $elem_val.Name "/")) 0) "_")) | collections.Reverse) | uniq )) }}
+            {{- /* printf "%#v" $fileNameTags */}}
+            {{- if (not (and (eq (len $fileNameTags) 1) (eq (index $fileNameTags 0) ""))) }}
+                    {{- $currTags := slice }}
+                    {{- range $newTag := $fileNameTags }}
+                        {{- if (strings.Contains $newTag "&") }}
+                            {{- $currTags = $currTags | append (split $newTag "&")}}
+                        {{- else }}
+                            {{- $currTags = $currTags | append (title (replace $newTag "-" " " )) }}
+                        {{- end }}
+                    {{- end }}
+                {{ $img_dat.Set "taxonomies" (merge ( $img_dat.Get "taxonomies" ) (dict "tags" $currTags  ) )}}
+                {{/* printf "%#v" ( $img_dat.Get "taxonomies" )  */}}
+            {{- end }}
+
+        {{- end }}
+
+
         {{- $orientation := $.Scratch.Get "orientation" }}
         {{- /* TODO: handle flipped orientations */}}
         {{- $.Scratch.Set "rotation" "" }}
