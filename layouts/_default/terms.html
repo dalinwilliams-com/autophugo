@@ -105,7 +105,7 @@
                             {{- end }}
                             {{- range $newTag := $tagSet }}
                                 {{- $newTag = (replaceRE  `(-?[0-9]{4}-[0-9]{2}-?)` "" $newTag ) }}
-                                {{- $newTag = (replaceRE  `(-?[0-9]{4})` "" $newTag ) }}
+                                {{- $newTag = (replaceRE  `(-?[0-9]{4}-?)` "" $newTag ) }}
                                 {{- $newTag = (title (replace $newTag "-" " " ))}}
                                 {{/* If this tag is a list of names (signified by aan &), continue to delineate */}}
 
