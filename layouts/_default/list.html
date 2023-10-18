@@ -203,6 +203,8 @@
                         {{- if (strings.Contains $newTag "&") }}
                             {{- $currTags = $currTags | append (split $newTag "&")}}
                         {{- else }}
+                            {{- $newTag = (replaceRE  `(-?[0-9]{4}-[0-9]{2}-?)` "" $newTag ) }}
+                            {{- $newTag = (replaceRE  `(-?[0-9]{4}-?)` "" $newTag ) }}
                             {{- $currTags = $currTags | append (title (replace $newTag "-" " " )) }}
                         {{- end }}
                     {{- end }}
