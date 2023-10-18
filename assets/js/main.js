@@ -1,3 +1,4 @@
+console.log("in main.js");
 (function($) {
 
     $(function() {
@@ -12,6 +13,8 @@
             if( document.readyState != 'loading' ) {
                 window.setTimeout(function() {
                     $body.removeClass('loading');
+                    $comments.removeClass('waiting-for-load');
+                    $comments.addClass('ease-in');
                 }, 100);
             } else {
                 $window.on('load', function() {

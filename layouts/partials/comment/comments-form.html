@@ -10,7 +10,7 @@
     </div>
     <div>
     {{ end }}
-        <form name="BlogComments" action="/comment-thanks" method="POST" netlify-honeypot="bot-field" netlify>
+        <form name="BlogComments" {{/*action="/comment-thanks"*/}} method="POST" netlify-honeypot="bot-field" data-netlify="true" netlify>
             <input name="path" type="hidden" value="{{ .RelPermalink }}">
             <input name="bot-field" type="hidden">
             <div >
