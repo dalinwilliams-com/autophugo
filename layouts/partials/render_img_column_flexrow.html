@@ -73,7 +73,7 @@
                             id="{{ md5 $filename }}"
                             downloadable="{{ cond $downloadable "true" "false" }}"
                             {{- if $downloadable }}
-                                download_file="{{ (cond $orig_download .orig .full).RelPermalink }}"
+                            download_file="{{ (cond $orig_download .orig .full).RelPermalink }}"
                             {{- end }}
                             download_name="{{ .phototitle | default (md5 $filename) }}"
                             orig_name="{{ $filename }}"
@@ -85,7 +85,10 @@
                             {{- end }}>
                         <div id="image_number_{{ .index }}" class="gallery-item-marker"></div>
                         <img src="{{ .thumb.RelPermalink }}"
-                            {{ with .alt }} alt="{{ . }}"{{ end }}>
+                            {{- with .alt }} alt="{{ . }}"{{ end }}>
+                        {{- with .description }}
+                        <div class="invis_desc">{{ (. | markdownify) | safeHTMLAttr }}</div>
+                        {{- end }}
                     </a>
                     {{- if (default false ($.Param "taxonomies_links")) }}
                         <div class="caption_tax">
