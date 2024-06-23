@@ -25,7 +25,8 @@
 <link href="{{ .RelPermalink }}" rel="feed" type="application/rss+xml" title="{{ $.Site.Title }}" />
 {{ end }}
 
-{{ template "_internal/google_analytics_async.html" . }}
+{{- /* Commented out the following line due to issues loading this partial*/}}
+{{- /*template "_internal/google_analytics_async.html" .*/}}
 
 {{- /* Compare this snippet from layouts/partials/head.html: */}}
 {{- $font_awesome := resources.Get "css/font-awesome.min.css" -}}
