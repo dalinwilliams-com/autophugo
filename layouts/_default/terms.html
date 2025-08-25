@@ -54,7 +54,7 @@
                                         {{/* printf "%#v" $tag */}}
                                         {{- $thumb := $img.Resize $thumb_size }}
                                         {{- /* Create an object representing this tag term entry */}}
-                                        {{- $url := ( printf "/%s/#%s" $filedir ( md5 $filename ) ) | relURL }}
+                                        {{- $url := ( printf "%s/#%s" $filedir ( md5 $filename ) ) | relURL }}
                                         {{- $img_desc := dict "type" "link" "link" $url "title" $exif.Tags.ImageDescription "thumb" $thumb }}
                                         {{- /* Add this object to the list */}}
                                         {{- $cur_entry := (index ($.Scratch.Get "tags") $tag) }}
@@ -78,7 +78,7 @@
                             {{- $thumb := $img.Resize $thumb_size }}
 
                             {{- /* Create an object representing this tag term entry */}}
-                            {{- $url := ( printf "/%s/#%s" $filedir ( md5 $filename ) ) | relURL }}
+                            {{- $url := ( printf "%s/#%s" $filedir ( md5 $filename ) ) | relURL }}
                             {{- $img_desc := dict "type" "link" "link" $url "title" $resource.phototitle "thumb" $thumb }}
                             {{- /* Add this object to the list */}}
                             {{- $cur_entry := (index ($.Scratch.Get "tags") $tag) }}
@@ -107,11 +107,10 @@
                                 {{- $newTag = (replaceRE  `(-?[0-9]{4}-[0-9]{2}-?)` "" $newTag ) }}
                                 {{- $newTag = (replaceRE  `(-?[0-9]{4}-?)` "" $newTag ) }}
                                 {{- $newTag = (title (replace $newTag "-" " " ))}}
-                                {{/* If this tag is a list of names (signified by aan &), continue to delineate */}}
-
+                                {{/* If this tag is a list of names (signified by an &), continue to delineate */}}
                                 {{- $thumb := $img.Resize $thumb_size }}
                                 {{- /* Create an object representing this tag term entry */}}
-                                {{- $url := ( printf "/%s/#%s" $filedir ( md5 $filename ) ) | relURL }}
+                                {{- $url := ( printf "%s/#%s" $filedir ( md5 $filename ) ) | relURL }}
                                 {{/* printf "%s\n" $url */}}
                                 {{- $img_desc := dict "type" "link" "link" $url "thumb" $thumb }}
                                 {{- /* Add this object to the list */}}

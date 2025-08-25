@@ -82,6 +82,6 @@
             {{ end }}
         </div>
         <p class="copyright">
-            &copy; {{ with .Site.Params.footer.copyright.name }}{{ . | markdownify }}{{ end }}. Code generated with <a href="https://gohugo.io/">Hugo</a>.
+            &copy; {{ with .Site.Params.footer.copyright }}<a href="{{ .url }}">{{ .name | markdownify }}</a>, 2022{{ end }}.
         </p>
     </footer>
