@@ -44,7 +44,7 @@
                     {{- $usrcmt := $exif.Tags.UserComment }}
                     {{/* printf "%#v" . */}}
                     {{- if $usrcmt }}
-                        {{- if (eq (substr $exif.Tags.UserComment 5 1) "{") }}
+                        {{- if (eq (substr $exif.Tags.UserComment 0 1) "{") }}
                             {{- $jsonData :=  (replace $exif.Tags.UserComment "ASCII" "")  | transform.Unmarshal }}
                             {{- with $jsonData }}
                                 {{/* printf "%#v" . */}}
