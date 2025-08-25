@@ -5,6 +5,7 @@
                 <section>
                     <h2>{{ with .Site.Params.footer.paragraph.headline }}{{ . | markdownify }}{{ end }}</h2>
                     <p>{{ with .Site.Params.footer.paragraph.text }}{{ . | markdownify }}{{ end }}</p>
+                    <p>{{ with .Description }}{{ . | markdownify }}{{ end }}</p>
                 </section>
                 <section>
                     <h2>{{ with .Site.Params.footer.social.headline }}{{ . | markdownify }}{{ end }}</h2>
@@ -14,7 +15,9 @@
                     {{ end }}
                     </ul>
                 </section>
-                    &copy; {{ with .Site.Params.footer.copyright.name }}{{ . | markdownify }}{{ end }}.
+                <p class="copyright">
+                    &copy; {{ with .Site.Params.footer.copyright }}<a href="{{ .url }}">{{ .name | markdownify }}</a>, 2022{{ end }}.
+                </p>
 
                 {{- /* Unfortunately I cannot find a way to determine if disableKinds
                        is turned on, so I cannot check that for taxonomy or term.
@@ -61,17 +64,17 @@
                         <h2>{{ with .Site.Params.footer.contact.headline }}{{ . | markdownify }}{{ end }}</h2>
                         <form method="post" action="//formspree.io/f/{{ with .Site.Params.footer.contact.formspreeID }}{{.}}{{ end }}" novalidate>
                             <div class="field half first">
-                                <input type="text" name="name" required data-validation-required-message="{{ with .Site.Params.footer.contact.name.warning }}{{ . | markdownify}}{{ end }}" id="name" placeholder="{{ with .Site.Params.footer.contact.name.text }}{{ .  | markdownify }}{{ end }}" />
+                                <input type="text" name="name" required data-validation-required-message="{{ with .Site.Params.footer.contact.name.warning }}{{ . | markdownify}}{{ end }}" id="name" placeholder="{{ with .Site.Params.footer.contact.name.text }}{{ .  | markdownify }}{{ end }}">
                             </div>
                             <div class="field half">
-                                <input type="email" name="email" required data-validation-required-message="{{ with .Site.Params.footer.contact.email.warning }}{{ . | markdownify }}{{ end }}" id="email" placeholder="{{ with .Site.Params.footer.contact.email.text }}{{ . | markdownify }}{{ end }}" />
+                                <input type="email" name="email" required data-validation-required-message="{{ with .Site.Params.footer.contact.email.warning }}{{ . | markdownify }}{{ end }}" id="email" placeholder="{{ with .Site.Params.footer.contact.email.text }}{{ . | markdownify }}{{ end }}">
                             </div>
                             <div class="field">
                                 <textarea name="message" required data-validation-required-message="{{ with .Site.Params.footer.contact.message.warning }}{{ . | markdownify }}{{ end }}" id="message" rows="4" placeholder="{{ with .Site.Params.footer.contact.message.text }}{{ . | markdownify }}{{ end }}"></textarea>
                             </div>
                             <ul class="actions">
-                                <li><input type="submit" value="{{ .Site.Params.footer.contact.buttonText }}" class="special" /></li>
-                                <li><input type="reset" value="{{ .Site.Params.footer.contact.resetText }}" /></li>
+                                <li><input type="submit" value="{{ .Site.Params.footer.contact.buttonText }}" class="special"></li>
+                                <li><input type="reset" value="{{ .Site.Params.footer.contact.resetText }}"></li>
                             </ul>
                         </form>
                     </section>
@@ -79,6 +82,6 @@
             {{ end }}
         </div>
         <p class="copyright">
-            &copy; {{ with .Site.Params.footer.copyright.name }}{{ . | markdownify }}{{ end }}. Code generated with <a href="https://gohugo.io/">Hugo</a>.
+            &copy; {{ with .Site.Params.footer.copyright }}<a href="{{ .url }}">{{ .name | markdownify }}</a>, 2022{{ end }}.
         </p>
     </footer>

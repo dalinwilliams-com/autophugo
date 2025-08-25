@@ -10,6 +10,7 @@ console.log("in main.js");
 
         // Add (and later, on load, remove) "loading" class.
             $body.addClass('loading');
+            //$comments.hide();
             if( document.readyState != 'loading' ) {
                 window.setTimeout(function() {
                     $body.removeClass('loading');

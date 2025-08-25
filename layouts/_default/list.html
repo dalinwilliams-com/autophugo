@@ -144,8 +144,10 @@
             {{- if (isset .Tags "UserComment") }}
                 {{/* printf "%#v" . */}}
 
-                {{- if (eq (substr .Tags.UserComment 5 1) "{") }}
+                <!-- {{ printf "%#v --- %#v" .Tags.UserComment (substr .Tags.UserComment 0 1)}} -->
+                {{- if (eq (substr .Tags.UserComment 0 1) "{") }}
                     {{ $jsonData :=  (replace .Tags.UserComment "ASCII" "")   | transform.Unmarshal }}
+                    <!-- {{ printf "%#v" $jsonData }} -->
                     {{- if (and (isset $jsonData "alt") (not ($img_dat.Get "alt"))) }}
                         {{- $img_dat.Set "alt" (index $jsonData "alt" ) }}
                     {{- end }}
@@ -170,13 +172,18 @@
 
                         {{- $tags = $tags | append (split (index $jsonData "tags") "," ) }}
 
-
                         {{- $img_dat.Set "taxonomies"  (dict "categories" $categories "tags" $tags ) }}
-
                     {{- end }}
 
                     {{- if (and (isset $jsonData "tags") (not ($img_dat.Get "tags"))) }}
-                        {{- $img_dat.Set "tags" (split (index $jsonData "tags") "," ) }}
+                        <!-- {{ printf "tags are %#v" (split (index $jsonData "tags") "," ) }} -->
+                        <!-- {{- $tags := (slice "") }} -->
+                        {{- $tags := (split (index $jsonData "tags") "," ) }}
+                        {{- $img_dat.Set "taxonomies"  (dict "tags" $tags ) }}
+
+                        <!-- {{ printf "%#v" ($img_dat.Get "taxonomies") }} -->
+
+                        <!-- {{- $img_dat.Set "tags" (split (index $jsonData "tags") "," ) }} -->
                     {{- end }}
                 {{- else }}
                     {{- if (not ($img_dat.Get "description")) }}
@@ -209,11 +216,12 @@
                         {{- end }}
                     {{- end }}
                 {{ $img_dat.Set "taxonomies" (merge ( $img_dat.Get "taxonomies" ) (dict "tags" $currTags  ) )}}
-                {{/* printf "%#v" ( $img_dat.Get "taxonomies" )  */}}
+                <!-- {{ printf "%#v" ( $img_dat.Get "taxonomies" )  }} -->
             {{- end }}
 
         {{- end }}
 
+        <!-- {{ printf "%#v" ( $img_dat.Get "taxonomies" )  }} -->
 
         {{- $orientation := $.Scratch.Get "orientation" }}
         {{- /* TODO: handle flipped orientations */}}
