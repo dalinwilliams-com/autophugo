@@ -230,7 +230,10 @@ console.log("in main.js");
                                 caption += '<div title="Download" ' +
                                     'class="download-button"><a href="' +
                                     item.el.attr("download_file") + '" download="' +
-                                    item.el.attr("orig_name") +
+                                    // Math.abs(item.el.attr("orig_name").split('')
+                                    //     .reduce((prev, curr) =>
+                                    //     Math.imul(31, prev) + curr.charCodeAt(0) | 0, 0)) +
+                                    item.el.attr("download_name") +
                                     '"><i class="fa fa-download"></i></a></div>' +
                                     '<div class="caption-surround">';
                             }
