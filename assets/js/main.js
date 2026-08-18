@@ -234,6 +234,11 @@ console.log("in main.js");
                                     //     .reduce((prev, curr) =>
                                     //     Math.imul(31, prev) + curr.charCodeAt(0) | 0, 0)) +
                                     item.el.attr("download_name") +
+                                    '" data-goatcounter-click="' +
+                                    item.el.attr("data-goatcounter-click") +
+                                    '" data-goatcounter-title="Photo Downloaded" ' +
+                                    'data-goatcounter-referrer="' +
+                                    item.el.attr("data-goatcounter-referrer") +
                                     '"><i class="fa fa-download"></i></a></div>' +
                                     '<div class="caption-surround">';
                             }
